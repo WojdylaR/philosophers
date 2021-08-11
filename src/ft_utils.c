@@ -1,41 +1,5 @@
 #include "../include/philosophers.h"
 
-void	ft_putchar_fd(char c, int i)
-{
-	write(i, &c, 1);
-}
-
-void	ft_putnbr_fd(int n, int fd)
-{
-	if (n == -2147483648)
-		write(fd, "-2147483648", 11);
-	else if (n < 10 && n >= 0)
-		ft_putchar_fd(n + 48, fd);
-	else if (n < 0)
-	{
-		write(fd, "-", 1);
-		ft_putnbr_fd(n * (-1), fd);
-	}
-	else
-	{
-		ft_putnbr_fd(n / 10, fd);
-		ft_putnbr_fd(n % 10, fd);
-	}
-}
-
-void	ft_putstr_philo(char *str, int t, int p)
-{
-	int	x;
-
-	x = 0;
-	while (str[x])
-		x++;
-	ft_putnbr_fd(p, 1);
-	write(1, " ms ", 6);
-	ft_putnbr_fd(t, 1);
-	write(1, str, x);
-}
-
 int ft_isdigit(int c)
 {
 	if (c >= '0' && c <= '9')

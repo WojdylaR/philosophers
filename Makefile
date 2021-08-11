@@ -1,6 +1,6 @@
 NAME = philosophers
 
-FLAGS = #-Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror
 
 CC = gcc #-g3 -fsanitize=address
 
@@ -8,9 +8,10 @@ HEADER = include/philosophers.h
 
 SRCS =  src/main.c \
 		src/ft_utils.c \
-		src/parcing.c \
+		src/parsing.c \
 		src/philosophers.c \
-		src/ft_philo.c
+		src/ft_philo.c \
+		src/ft_exit.c
 
 
 OBJS = $(SRCS:.c=.o)

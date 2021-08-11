@@ -1,15 +1,22 @@
 #include "../include/philosophers.h"
 
-void	init_ph(t_philo *ph, t_param *param)
+int	init_ph(t_philo *ph, t_param *param)
 {
 	int	i;
 
 	i = -1;
+	param->str_ph = ph;
+	param->fork = malloc(sizeof(pthread_mutex_t) * param->nb_p);
+	if (!(param->fork))
+		return (0);
 	while (++i < param->nb_p)
 	{
-		ph[i].str_pa = *param;
+		ph[i].nb_eat = 0;
+		pthread_mutex_init(&param->fork[i], NULL);
+		ph[i].str_pa = param;
 		ph[i].id = i + 1;
 	}
+	return (1);
 }
 
 void ft_error(t_param *lst, int i)
@@ -36,7 +43,7 @@ void put_in_lst(t_param *lst, int i, char *str)
 		lst->nb_eat = ft_atoi(str);
 }
 
-int ft_parc(int argc, char **argv, t_param *lst)
+int ft_pars(int argc, char **argv, t_param *lst)
 {
 	int i;
 	int j;
