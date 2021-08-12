@@ -2,17 +2,13 @@
 
 int main(int argc, char **argv)
 {
-	t_param *lst;
+	t_param *param;
 
-	lst = malloc(sizeof(t_param));
-	if (!(lst))
+	param = malloc(sizeof(t_param));
+	if (!(param))
 		return (0);
-	if (ft_pars(argc, argv, lst) == -1)
-	{
-		printf("Bad arg ! Should be : number of philo, time to die, time to ");
-		printf("eat, time to sleep, \"number of times philosopher must eat\"");
-		return (0);
-	}
-	ft_init_thread(lst);
+	if (ft_pars(argc, argv, param) == -1)
+		ft_exit(param, -2);
+	ft_init_thread(param);
 	return (0);
 }

@@ -24,13 +24,14 @@ typedef struct s_philo
 {
 	int				id;
 	pthread_t		id_th;
+	pthread_mutex_t	eat;
 	t_param			*str_pa;
 	int				t_eat;
 	int				l_eat;
 	int				nb_eat;
 }				t_philo;
 
-
+void			ft_usleep(int time_in_ms);
 int				init_ph(t_philo *ph, t_param *param);
 long long int	ft_atoi(const char *str);
 int				ft_pars(int argc, char **argv, t_param *lst);

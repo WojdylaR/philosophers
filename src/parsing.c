@@ -11,7 +11,8 @@ int	init_ph(t_philo *ph, t_param *param)
 		return (0);
 	while (++i < param->nb_p)
 	{
-		ph[i].nb_eat = 0;
+		ph[i].nb_eat = param->nb_eat;
+		param->str_ph->l_eat = get_timestamp();
 		pthread_mutex_init(&param->fork[i], NULL);
 		ph[i].str_pa = param;
 		ph[i].id = i + 1;
@@ -19,36 +20,33 @@ int	init_ph(t_philo *ph, t_param *param)
 	return (1);
 }
 
-void ft_error(t_param *lst, int i)
+void put_in_param(t_param *param, int i, char *str)
 {
-	if (i == -1)
-	{
-		free(lst);
-		printf("Bad arg ! Should be : number of philo, time to die, time to ");
-		printf("eat, time to sleep, \"number of times philosopher must eat\"");
-	}
-}
+	int x;
 
-void put_in_lst(t_param *lst, int i, char *str)
-{
+	x = -1;
+	while (str[++x])
+		if (str[x] == '-')
+			ft_exit(param, -3);
 	if (i == 1)
-		lst->nb_p = ft_atoi(str);
+		param->nb_p = ft_atoi(str);
 	if (i == 2)
-		lst->t_die = ft_atoi(str);
+		param->t_die = ft_atoi(str);
 	if (i == 3)
-		lst->t_eat = ft_atoi(str);
+		param->t_eat = ft_atoi(str);
 	if (i == 4)
-		lst->t_sleep = ft_atoi(str);
+		param->t_sleep = ft_atoi(str);
 	if (i == 5)
-		lst->nb_eat = ft_atoi(str);
+		param->nb_eat = ft_atoi(str);
 }
 
-int ft_pars(int argc, char **argv, t_param *lst)
+int ft_pars(int argc, char **argv, t_param *param)
 {
 	int i;
 	int j;
 
 	i = 1;
+	param->nb_eat = -1;
 	if (argc != 5 && argc != 6)
 		return (-1);
 	while (argv[i])
@@ -60,11 +58,8 @@ int ft_pars(int argc, char **argv, t_param *lst)
 				return (-1);
 			j++;
 		}
-		put_in_lst(lst, i, argv[i]);
+		put_in_param(param, i, argv[i]);
 		i++;
 	}
-	lst->fork = malloc(sizeof(int) * lst->nb_p + 1);
-	if (!(lst->fork))
-		return (-1);
 	return (1);
 }

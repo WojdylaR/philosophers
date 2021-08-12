@@ -1,17 +1,17 @@
 #include "../include/philosophers.h"
 
-int    get_timestamp(void)
+void    end_simu(t_param *param)
 {
-    struct timeval    curr_time;
-    static int        timebase = 0;
+    int j;
 
-    if (timebase == 0)
+    j = 0;
+    param->t_die = -1;
+    while (j < param->nb_p)
     {
-        gettimeofday(&curr_time, NULL);
-        timebase = curr_time.tv_sec * 1000 + curr_time.tv_usec / 1000;
+        pthread_detach(param->str_ph[j].id_th);
+        j++;
     }
-    gettimeofday(&curr_time, NULL);
-    return (curr_time.tv_sec * 1000 + curr_time.tv_usec / 1000 - timebase);
+    return ;
 }
 
 void    *thread_philo(void *temp)
@@ -19,7 +19,7 @@ void    *thread_philo(void *temp)
 	t_philo	*ph;
 
 	ph = temp;
-    while (1)
+    while (ph->str_pa->t_die > 0 && ph->nb_eat != 0)
     {
         ft_eat(ph);
 		ph->nb_eat++;
@@ -29,15 +29,33 @@ void    *thread_philo(void *temp)
     return (0);
 }
 
-int	check_death(t_param *param, int i)
+void    check_death(t_param *param)
 {
-	while (i < param->nb_p)
-	{
-		if (get_timestamp() - param->str_ph->l_eat > param->t_die)
-			ft_exit(param, -1);
-		usleep(10000);
-	}
-	return (1);
+    int i;
+    int c;
+    int delta;
+
+    c = 0;
+    while (1)
+    {
+        i = -1;
+        while (++i < param->nb_p)
+        {
+            pthread_mutex_lock(&param->str_ph->eat);
+            delta = get_timestamp() - param->str_ph[i].l_eat;
+            pthread_mutex_unlock(&param->str_ph->eat);
+            if (delta > param->t_die)
+            {
+                printf("%d %d died\n", get_timestamp(), param->str_ph[i].id);
+                return (end_simu(param));
+            }
+            if (param->str_ph[i].nb_eat == 0)
+                c++;
+        }
+        if (c == param->nb_p)
+            return (end_simu(param));
+        ft_usleep(1);
+    }
 }
 
 int	ft_init_thread(t_param *param)
@@ -51,14 +69,7 @@ int	ft_init_thread(t_param *param)
     init_ph(ph, param);
     i = -1;
     while (++i < param->nb_p)
-    {
         pthread_create(&ph->id_th, NULL, &thread_philo, &ph[i]);
-		usleep(1000);
-	}
-	while (1)
-	{
-		i = 0;
-		check_death(param, i);
-	}
+    check_death(param);
 	return (1);
 }
